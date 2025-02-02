@@ -1,0 +1,19 @@
+[
+    {
+      "id": 1,
+      "title": "Software Engineer",
+      "type": "Full-Time",
+      "salary": "$100,000",
+      "location": "New York, NY",
+      "description": "We are looking for a talented Software Engineer to join our team..."
+    },
+    {
+      "id": 2,
+      "title": "Data Analyst",
+      "type": "Part-Time",
+      "salary": "$60,000",
+      "location": "San Francisco, CA",
+      "description": "Join our data analytics team and help us uncover valuable insights..."
+    }
+  ]
+  
