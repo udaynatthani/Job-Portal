@@ -33,10 +33,19 @@ const JobList = ({ job }) => {
             <FaLocationDot className="inline mr-2 mb-1 text-lg" />{job.location}</div>
           <Link
             to={`/jobs/${job.id}`}
-            className="h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm"
+            className="h-[35px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm"
           >
             Read More
           </Link>
+        <a
+          href="https://forms.google.com/form/your-form-id"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="h-[36px] bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm"
+        >
+          Apply Now
+        </a>
+          
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@ const JobListings = ({ isHome = false }) => {
     const fetchJobs = async () => {
       setLoading(true);
   
-      setTimeout(async () => { // Delay fetching for 2 seconds
+      setTimeout(async () => { 
         const storedJobs = JSON.parse(localStorage.getItem("jobs")) || [];
   
         try {

@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams, useLoaderData, useNavigate} from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FaArrowLeft, FaLocationDot } from "react-icons/fa6";
@@ -6,7 +7,12 @@ import { toast } from "react-toastify";
 const JobPage = ({deleteJob}) => {
  
   const navigate = useNavigate();
+  const { id } = useParams();
   const job = useLoaderData();
+
+  if (!job) {
+    return <div>Job not found</div>;
+  }
 
   const onDeleteClick =(jobId) =>{
     const confirm = window.confirm("Do you want to delete this job listing? ")
@@ -106,10 +112,12 @@ const JobPage = ({deleteJob}) => {
 
 //using DataLoader (from react-router-dom) method to fetch data from Json Server
 const jobLoader = async ({ params }) => {
-  const res = await fetch(`/api/jobs/${params.id}`);
+  const res = await fetch('/jobs.json');
   const data = await res.json();
-  return data;
-  
+  // Find the specific job from the jobs array
+  const job = data.jobs.find(job => job.id === params.id);
+  return job;
 };
+
 export { JobPage as default, jobLoader };
 // export default JobPage;

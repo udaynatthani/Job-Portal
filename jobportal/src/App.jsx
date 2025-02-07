@@ -13,13 +13,15 @@ import JobPage from "./Pages/JobPage";
 import AddJobPage from "./Pages/AddJobPage";
 import EditJobPage from "./Pages/EditJobPage";
 import Login from "./Components/Login";
-// import Auth from './Components/Auth'
+import Register from "./Components/Register";
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
+    
     <Route path="/" element={<MainLayout />}>
       <Route index element={<HomePage />} />
+      
       <Route path="/jobs" element={<JobsPage />} />
       <Route path="/jobs/:id" element={<JobPage />} />
       <Route path="/add-job" element={<AddJobPage addJobSubmit={() => {}} />} />
@@ -27,12 +29,18 @@ const router = createBrowserRouter(
         path="/edit-job/:id"
         element={<EditJobPage updateJobSubmit={() => {}} />}
       />
-      <Route path="/Login" element={<Login />} /> Added Login Route
+      <Route path="/Login" element={<Login />} /> 
+      <Route path="/Register" element={<Register />} /> 
+    
     </Route>
+    
+  
   )
 );
 
 function App() {
+  
+  
   return <RouterProvider router={router} />;
 }
 

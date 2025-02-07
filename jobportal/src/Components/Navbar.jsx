@@ -1,12 +1,33 @@
-import { NavLink } from "react-router-dom";
-import logo from "../assets/logo.png";
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import logo from '../assets/logo.png';
+import { app } from '../firebase';
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, [auth]);
+
+  const handleLogout = () => {
+    signOut(auth).then(() => {
+      toast.success('Logged out successfully!');
+      navigate('/');
+    });
+  };
+
   const linkClass = ({ isActive }) =>
     isActive
-      ? "bg-black text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
-      : "text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2";     
+      ? 'bg-black text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'
+      : 'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2';
 
   return (
     <nav className="bg-indigo-300 border-b-2 border-indigo-400">
@@ -21,19 +42,42 @@ const Navbar = () => {
             </NavLink>
             <div className="md:ml-auto mt-2">
               <div className="flex space-x-2">
-                <NavLink to="/" className={linkClass}>
-                  Home
-                </NavLink>
-                <NavLink to="/login" className={linkClass}>
-                  Jobs
-                </NavLink>
-                <NavLink to="/login" className={linkClass}>
-                  Add Job
-                </NavLink>
-               
-                <NavLink to="/Login" className={linkClass}>
-                  Login
-                </NavLink>
+                <>
+                  <NavLink to="/" className={linkClass}>
+                    Home
+                  </NavLink>
+                  {user ? (
+                    <NavLink to="/jobs" className={linkClass}>
+                      Jobs
+                    </NavLink>
+                  ) : (
+                    <NavLink to="/login" className={linkClass}>
+                      Jobs
+                    </NavLink>
+                  )}
+
+                  {user ? (
+                    <NavLink to="/add-job" className={linkClass}>
+                      Add Job
+                    </NavLink>
+                  ) : (
+                    <NavLink to="/login" className={linkClass}>
+                      Add Job
+                    </NavLink>
+                  )}
+                </>
+                {user ? (
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-500 px-4 py-2 rounded"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <NavLink to="/login" className={linkClass}>
+                    Login
+                  </NavLink>
+                )}
               </div>
             </div>
           </div>
