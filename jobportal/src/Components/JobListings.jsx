@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { db } from "../firebase"; // Import Firestore instance
+import { collection, getDocs } from "firebase/firestore";
 import JobList from "./JobList";
 import Spinner from "./Spinner";
 
@@ -12,26 +14,21 @@ const JobListings = ({ isHome = false }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, "jobs"));
+        const jobList = querySnapshot.docs.map((doc) => ({
+          id: doc.id, // Firestore document ID
+          ...doc.data(),
+        }));
 
-      setTimeout(async () => {
-        const storedJobs = JSON.parse(localStorage.getItem("jobs")) || [];
+        const jobsToDisplay = isHome ? jobList.slice(0, 3) : jobList;
 
-        try {
-          const response = await fetch("/jobs.json");
-          const jsonJobs = await response.json();
-
-          const allJobs = [...jsonJobs, ...storedJobs];
-
-          const jobsToDisplay = isHome ? allJobs.slice(0, 3) : allJobs;
-
-          setJobs(jobsToDisplay);
-          setFilteredJobs(jobsToDisplay);
-        } catch (error) {
-          console.error("Error fetching jobs:", error);
-        }
-
-        setLoading(false);
-      }, 500);
+        setJobs(jobsToDisplay);
+        setFilteredJobs(jobsToDisplay);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
+      setLoading(false);
     };
 
     fetchJobs();

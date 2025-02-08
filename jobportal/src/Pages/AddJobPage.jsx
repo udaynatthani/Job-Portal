@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { db } from '../firebase'; // Assuming firebase.js is in the root of your project
+import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
 const AddJobPage = () => {
@@ -14,34 +14,59 @@ const AddJobPage = () => {
   const [companyDescription, setCompanyDescription] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const submitForm = async (e) => {
     e.preventDefault();
-
-    const newJob = {
-      title,
-      type,
-      location,
-      description,
-      salary,
-      company: {
-        name: companyName,
-        description: companyDescription,
-        contactEmail,
-        contactPhone,
-      },
-    };
+    setLoading(true);
 
     try {
+      // Create job object without ID first
+      const newJob = {
+        title,
+        type,
+        location,
+        description,
+        salary,
+        company: {
+          name: companyName,
+          description: companyDescription,
+          contactEmail,
+          contactPhone,
+        },
+        createdAt: new Date(),
+      };
+
+      // 🔥 Add job to Firestore and get its generated ID
       const docRef = await addDoc(collection(db, "jobs"), newJob);
-      console.log("Document written with ID: ", docRef.id);
+
+      // Update the document to include the Firestore-generated ID
+      await addDoc(collection(db, "jobs"), { ...newJob, id: docRef.id });
+
+      console.log("Job added with ID:", docRef.id);
+
       toast.success('Job listing added successfully!');
+
+      // Reset form
+      setTitle('');
+      setType('Full-Time');
+      setLocation('');
+      setDescription('');
+      setSalary('Under $50K');
+      setCompanyName('');
+      setCompanyDescription('');
+      setContactEmail('');
+      setContactPhone('');
+
+      // Navigate to job listings after submission
       navigate('/jobs');
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error adding job:", error);
       toast.error('Failed to add job listing.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,9 +78,7 @@ const AddJobPage = () => {
             <h2 className="text-3xl text-center font-semibold mb-6">Add Job</h2>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Job Type
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Job Type</label>
               <select
                 className="border rounded w-full py-2 px-3"
                 required
@@ -70,9 +93,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Job Title
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Job Title</label>
               <input
                 type="text"
                 className="border rounded w-full py-2 px-3"
@@ -84,9 +105,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Description
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Description</label>
               <textarea
                 className="border rounded w-full py-2 px-3"
                 rows="4"
@@ -98,9 +117,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Salary
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Salary</label>
               <select
                 className="border rounded w-full py-2 px-3"
                 required
@@ -122,9 +139,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Location
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Location</label>
               <input
                 type="text"
                 className="border rounded w-full py-2 px-3"
@@ -138,9 +153,7 @@ const AddJobPage = () => {
             <h3 className="text-2xl mb-5">Company Info</h3>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Company Name
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Company Name</label>
               <input
                 type="text"
                 className="border rounded w-full py-2 px-3"
@@ -152,9 +165,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Company Description
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Company Description</label>
               <textarea
                 className="border rounded w-full py-2 px-3"
                 rows="4"
@@ -165,9 +176,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Contact Email
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Contact Email</label>
               <input
                 type="email"
                 className="border rounded w-full py-2 px-3"
@@ -179,9 +188,7 @@ const AddJobPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Contact Phone
-              </label>
+              <label className="block text-gray-700 font-bold mb-2">Contact Phone</label>
               <input
                 type="tel"
                 className="border rounded w-full py-2 px-3"
@@ -193,10 +200,11 @@ const AddJobPage = () => {
 
             <div>
               <button
-                className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline"
+                className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full"
                 type="submit"
+                disabled={loading}
               >
-                Add Job
+                {loading ? 'Adding Job...' : 'Add Job'}
               </button>
             </div>
           </form>
