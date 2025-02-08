@@ -1,8 +1,8 @@
 // import emoji from "../assets/images/emoji.png";
-import React from "react";
+import React from 'react';
 const Hero = ({
-   title ="start your career today", 
-  subtitle ="Find your right job that fits your skills and needs!"
+  title = 'start your career today',
+  subtitle = 'Find your right job that fits your skills and needs!',
 }) => {
   return (
     <section className="bg-indigo-600 py-16 mb-4">
@@ -12,14 +12,12 @@ const Hero = ({
             {title}
           </h1>
           <div className="flex items-center justify-center">
-          <p className="my-4 text-xl text-white">{subtitle}</p>
-          {/* <img className="h-6 w-auto ml-3" src={emoji} alt="" /> */}
+            <p className="my-4 text-xl text-white">{subtitle}</p>
+            {/* <img className="h-6 w-auto ml-3" src={emoji} alt="" /> */}
           </div>
         </div>
       </div>
-      <div className="flex">
-            
-          </div>
+      <div className="flex"></div>
     </section>
   );
 };

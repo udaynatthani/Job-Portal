@@ -8,21 +8,20 @@ import {
   signInWithPopup,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { app } from '../firebase'; // Import your Firebase configuration
+import { app } from '../firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const auth = getAuth(app); // Initialize Firebase Authentication
-  const provider = new GoogleAuthProvider(); // Initialize Google Auth Provider
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Authenticate with Firebase
       await signInWithEmailAndPassword(auth, email, password);
       toast.success('Login successful!');
       navigate('/jobs');
@@ -38,7 +37,7 @@ const Login = () => {
       toast.success('Google sign in successful!');
       navigate('/jobs');
     } catch (error) {
-      setError('Google sign in failed!'); 
+      setError('Google sign in failed!');
       toast.error(error.message);
     }
   };
@@ -81,7 +80,7 @@ const Login = () => {
               required
             />
             <p className="text-right mt-2 text-blue-500">
-             <button onClick={handleResetPassword}>Forgot Password?</button>
+              <button onClick={handleResetPassword}>Forgot Password?</button>
             </p>
           </div>
 

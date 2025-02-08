@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import JobList from "./JobList";
 import Spinner from "./Spinner";
+import { db } from "../firebase"; // Import Firestore database
+import { collection, getDocs } from "firebase/firestore"; // Firestore methods
 
 const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
@@ -9,31 +11,20 @@ const JobListings = ({ isHome = false }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
-  
-      setTimeout(async () => { 
-        const storedJobs = JSON.parse(localStorage.getItem("jobs")) || [];
-  
-        try {
-          const response = await fetch("/jobs.json");
-          const jsonJobs = await response.json();
-  
-          const allJobs = [...jsonJobs, ...storedJobs];
-  
-          const jobsToDisplay = isHome ? allJobs.slice(0, 3) : allJobs;
-  
-          setJobs(jobsToDisplay);
-        } catch (error) {
-          console.error("Error fetching jobs:", error);
-        }
-  
-        setLoading(false);
-      }, 1000); 
-  
+      try {
+        const querySnapshot = await getDocs(collection(db, "jobs"));
+        const jobList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Show only 3 jobs on the homepage, otherwise show all
+        setJobs(isHome ? jobList.slice(0, 3) : jobList);
+      } catch (error) {
+        console.error("Error fetching jobs from Firestore:", error);
+      }
+      setLoading(false);
     };
-  
+
     fetchJobs();
   }, [isHome]);
-  
 
   return (
     <section className="bg-blue-50 px-4 py-10">

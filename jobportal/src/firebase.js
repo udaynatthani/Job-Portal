@@ -1,9 +1,12 @@
 import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
 
     apiKey: "AIzaSyAjybYFP-K8R-Cod_-zO5VW_DMMxXYVm3s",
   
     authDomain: "jobportal-bb949.firebaseapp.com",
+    
   
     projectId: "jobportal-bb949",
   
@@ -18,3 +21,6 @@ const firebaseConfig = {
   
   };
 export const app = initializeApp(firebaseConfig);  
+const db = getFirestore(app); // Initialize Firestore
+
+export { db };  

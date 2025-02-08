@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { app } from "../firebase";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { app } from '../firebase';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
   const navigate = useNavigate();
   const auth = getAuth(app);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    phone: "",
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
   });
 
   const handleChange = (e) => {
@@ -21,25 +21,31 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.password || !formData.phone) {
-      toast.error("Please fill in all fields");
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.phone
+    ) {
+      toast.error('Please fill in all fields');
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
 
-      // Get existing users from localStorage
-      const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+      const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
 
-      // Add new user to the array
       const updatedUsers = [...existingUsers, formData];
 
-      // Save updated users list back to localStorage
-      localStorage.setItem("users", JSON.stringify(updatedUsers));
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
 
-      toast.success("Registration successful!");
-      navigate("/login"); // Redirect to login page
+      toast.success('Registration successful!');
+      navigate('/login');
     } catch (error) {
       toast.error(error.message);
     }
@@ -106,7 +112,10 @@ const Register = () => {
           </button>
         </form>
         <p className="text-center mt-4">
-          Already have an account? <a href="/login" className="text-indigo-500">Login</a>
+          Already have an account?{' '}
+          <a href="/login" className="text-indigo-500">
+            Login
+          </a>
         </p>
       </div>
     </section>
