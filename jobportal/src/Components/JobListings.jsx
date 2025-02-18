@@ -1,32 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { db } from "../firebase"; // Import Firestore instance
-import { collection, getDocs } from "firebase/firestore";
-import JobList from "./JobList";
-import Spinner from "./Spinner";
+import React, { useState, useEffect } from 'react';
+import { db } from '../firebase'; // Import Firestore instance
+import { collection, getDocs } from 'firebase/firestore';
+import JobList from './JobList';
+import Spinner from './Spinner';
 
 const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTitle, setSearchTitle] = useState("");
-  const [searchCity, setSearchCity] = useState("");
+  const [searchTitle, setSearchTitle] = useState('');
+  const [searchCity, setSearchCity] = useState('');
 
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       try {
-        const querySnapshot = await getDocs(collection(db, "jobs"));
-        const jobList = querySnapshot.docs.map((doc) => ({
-          id: doc.id, // Firestore document ID
-          ...doc.data(),
-        }));
+        const querySnapshot = await getDocs(collection(db, 'jobs'));
+        const jobList = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title || 'Untitled',
+            location: data.location || 'Unknown',
+            ...data,
+          };
+        });
 
-        const jobsToDisplay = isHome ? jobList.slice(0, 3) : jobList;
+        console.log(
+          'Fetched Job IDs:',
+          jobList.map((job) => job.id)
+        );
+
+        // ✅ Remove duplicate jobs based on ID
+        const uniqueJobs = jobList.filter(
+          (job, index, self) => index === self.findIndex((j) => j.id === job.id)
+        );
+
+        const jobsToDisplay = isHome ? uniqueJobs.slice(0, 3) : uniqueJobs;
 
         setJobs(jobsToDisplay);
         setFilteredJobs(jobsToDisplay);
       } catch (error) {
-        console.error("Error fetching jobs:", error);
+        console.error('Error fetching jobs:', error);
       }
       setLoading(false);
     };
@@ -34,19 +49,18 @@ const JobListings = ({ isHome = false }) => {
     fetchJobs();
   }, [isHome]);
 
-  // 🔎 Search Handler (Title & City)
   const handleSearch = () => {
     let filtered = jobs;
 
     if (searchTitle) {
       filtered = filtered.filter((job) =>
-        job.title.toLowerCase().includes(searchTitle.toLowerCase())
+        job.title?.toLowerCase().includes(searchTitle.toLowerCase())
       );
     }
 
     if (searchCity) {
       filtered = filtered.filter((job) =>
-        job.location.toLowerCase().includes(searchCity.toLowerCase())
+        job.location?.toLowerCase().includes(searchCity.toLowerCase())
       );
     }
 
@@ -57,10 +71,9 @@ const JobListings = ({ isHome = false }) => {
     <section className="bg-blue-50 px-4 py-10">
       <div className="container-xl lg:container m-auto">
         <h2 className="text-3xl font-bold text-indigo-500 mb-6 text-center">
-          {isHome ? "Recent Jobs" : "Browse Jobs"}
+          {isHome ? 'Recent Jobs' : 'Browse Jobs'}
         </h2>
 
-        {/* 🔍 Search Inputs */}
         {!isHome && (
           <div className="flex flex-col md:flex-row gap-4 mb-4">
             <input
@@ -93,9 +106,7 @@ const JobListings = ({ isHome = false }) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {filteredJobs.length > 0 ? (
-              filteredJobs.map((job) => (
-                <JobList key={job.id} job={job} />
-              ))
+              filteredJobs.map((job) => <JobList key={job.id} job={job} />)
             ) : (
               <div className="text-center text-gray-600">
                 No jobs available.
