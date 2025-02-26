@@ -22,7 +22,9 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      localStorage.setItem('user', JSON.stringify({ uid: user.uid, email: user.email }));
       toast.success('Login successful!');
       navigate('/jobs');
     } catch (error) {
@@ -33,7 +35,9 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      localStorage.setItem('user', JSON.stringify({ uid: user.uid, email: user.email }));
       toast.success('Google sign in successful!');
       navigate('/jobs');
     } catch (error) {
@@ -100,13 +104,6 @@ const Login = () => {
         >
           Sign in with Google
         </button>
-
-        {/* <button
-          onClick={handleResetPassword}
-          className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600"
-        >
-          Reset Password
-        </button> */}
 
         <p className="text-center mt-4 text-gray-600">
           Don't have an account?{' '}

@@ -19,11 +19,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     signOut(auth).then(() => {
+      localStorage.removeItem('user');
       toast.success('Logged out successfully!');
       navigate('/');
     });
   };
-
+  
   const linkClass = ({ isActive }) =>
     isActive
       ? 'bg-black text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'
@@ -74,7 +75,7 @@ const Navbar = () => {
                     Logout
                   </button>
                 ) : (
-                  <NavLink to="/login" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
+                  <NavLink to="/login" className={linkClass}>
                     Login
                   </NavLink>
                 )}

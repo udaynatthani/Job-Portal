@@ -5,6 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import * as React from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import MainLayout from "./Layouts/MainLayout";
 import HomePage from "./Pages/HomePage";
@@ -15,32 +16,29 @@ import EditJobPage from "./Pages/EditJobPage";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 
+function ProtectedRoute({ element }) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user ? element : <Login />;
+}
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    
     <Route path="/" element={<MainLayout />}>
       <Route index element={<HomePage />} />
-      
-      <Route path="/jobs" element={<JobsPage />} />
-      <Route path="/jobs/:id" element={<JobPage />} />
-      <Route path="/add-job" element={<AddJobPage addJobSubmit={() => {}} />} />
+      <Route path="/jobs" element={<ProtectedRoute element={<JobsPage />} />} />
+      <Route path="/jobs/:id" element={<ProtectedRoute element={<JobPage />} />} />
+      <Route path="/add-job" element={<ProtectedRoute element={<AddJobPage addJobSubmit={() => {}} />} />} />
       <Route
         path="/edit-job/:id"
-        element={<EditJobPage updateJobSubmit={() => {}} />}
+        element={<ProtectedRoute element={<EditJobPage updateJobSubmit={() => {}} />} />}
       />
-      <Route path="/Login" element={<Login />} /> 
-      <Route path="/Register" element={<Register />} /> 
-    
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </Route>
-    
-  
   )
 );
 
 function App() {
-  
-  
   return <RouterProvider router={router} />;
 }
 
