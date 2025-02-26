@@ -24,7 +24,16 @@ const Login = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      localStorage.setItem('user', JSON.stringify({ uid: user.uid, email: user.email }));
+      
+      // Mock user type - You should fetch this from your database
+      const userType = email.includes('student') ? 'student' : 'employee'; 
+
+      localStorage.setItem('user', JSON.stringify({ 
+        uid: user.uid, 
+        email: user.email, 
+        type: userType 
+      }));
+
       toast.success('Login successful!');
       navigate('/jobs');
     } catch (error) {
@@ -37,7 +46,16 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      localStorage.setItem('user', JSON.stringify({ uid: user.uid, email: user.email }));
+
+      // Mock user type - Fetch this from Firestore if necessary
+      const userType = user.email.includes('student') ? 'student' : 'employee'; 
+
+      localStorage.setItem('user', JSON.stringify({ 
+        uid: user.uid, 
+        email: user.email, 
+        type: userType 
+      }));
+
       toast.success('Google sign in successful!');
       navigate('/jobs');
     } catch (error) {
