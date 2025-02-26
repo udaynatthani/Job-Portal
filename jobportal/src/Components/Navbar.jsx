@@ -43,25 +43,25 @@ const Navbar = () => {
             <div className="md:ml-auto mt-2">
               <div className="flex space-x-2">
                 <>
-                  <NavLink to="/" className={linkClass}>
+                  <NavLink to="/" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
                     Home
                   </NavLink>
                   {user ? (
-                    <NavLink to="/jobs" className={linkClass}>
+                    <NavLink to="/jobs" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
                       Jobs
                     </NavLink>
                   ) : (
-                    <NavLink to="/login" className={linkClass}>
+                    <NavLink to="/login" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
                       Jobs
                     </NavLink>
                   )}
 
                   {user ? (
-                    <NavLink to="/add-job" className={linkClass}>
+                    <NavLink to="/add-job" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
                       Add Job
                     </NavLink>
                   ) : (
-                    <NavLink to="/login" className={linkClass}>
+                    <NavLink to="/login" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
                       Add Job
                     </NavLink>
                   )}
@@ -74,7 +74,7 @@ const Navbar = () => {
                     Logout
                   </button>
                 ) : (
-                  <NavLink to="/login" className={linkClass}>
+                  <NavLink to="/login" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
                     Login
                   </NavLink>
                 )}

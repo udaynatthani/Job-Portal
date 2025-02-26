@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 const JobList = ({ job }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  if (!job) return null; // Prevents crashing if job data is missing
+  if (!job) return null;   
 
-  // Ensure description exists to avoid substring errors
+  
   const description = job.description ? job.description : "No description provided.";
 
   return (
