@@ -58,12 +58,12 @@ const Navbar = () => {
                   )}
 
                   {user ? (
-                    <NavLink to="/add-job" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
-                      Add Job
+                    <NavLink to="/employee" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
+                       Post a Job
                     </NavLink>
                   ) : (
                     <NavLink to="/login" className={'text-indigo-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'}>
-                      Add Job
+                       Post a Job
                     </NavLink>
                   )}
                 </>

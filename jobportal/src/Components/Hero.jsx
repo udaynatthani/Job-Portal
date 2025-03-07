@@ -1,7 +1,7 @@
 // import emoji from "../assets/images/emoji.png";
 import React from 'react';
 const Hero = ({
-  title = 'start your career today',
+  title = 'Start your career today',
   subtitle = 'Find your right job that fits your skills and needs!',
 }) => {
   return (

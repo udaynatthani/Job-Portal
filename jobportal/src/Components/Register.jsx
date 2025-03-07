@@ -15,10 +15,15 @@ const Register = () => {
     phone: '',
     studentId: '', // Only for students
     employeeId: ' ', // Only for employees
+    resume: '', // Added resume field
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === 'resume') {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -36,6 +41,11 @@ const Register = () => {
 
     if (userType === 'employee' && !formData.employeeId) {
       toast.error('Please enter your Employee ID');
+      return;
+    }
+
+    if (!formData.resume) {
+      toast.error('Please upload your resume');
       return;
     }
 
@@ -149,6 +159,17 @@ const Register = () => {
               />
             </div>
           )}
+
+          <div className="mb-4">
+            <label className="block mb-1">Resume</label>
+            <input
+              type="file"
+              name="resume"
+              onChange={(e) => handleChange(e)}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
 
           <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded">
             Register as {userType.charAt(0).toUpperCase() + userType.slice(1)}

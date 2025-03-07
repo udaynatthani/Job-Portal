@@ -26,10 +26,10 @@ const JobListings = ({ isHome = false }) => {
           };
         });
 
-        console.log(
-          'Fetched Job IDs:',
-          jobList.map((job) => job.id)
-        );
+        // console.log(
+        //   'Fetched Job IDs:',
+        //   jobList.map((job) => job.id)
+        // );
 
         // ✅ Remove duplicate jobs based on ID
         const uniqueJobs = jobList.filter(

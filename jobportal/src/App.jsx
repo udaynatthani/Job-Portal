@@ -15,6 +15,7 @@ import AddJobPage from "./Pages/AddJobPage";
 import EditJobPage from "./Pages/EditJobPage";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
+import EmployeeDash from "./Pages/EmployeeDash";
 
 function ProtectedRoute({ element }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -34,6 +35,7 @@ const router = createBrowserRouter(
       />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/employee" element={<EmployeeDash />} />
     </Route>
   )
 );

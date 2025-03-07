@@ -1,14 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { db } from '../firebase';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 
 const JobList = ({ job }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [user, setUser] = useState(null);
+  const [applicationStatus, setApplicationStatus] = useState('not-applied');
+  const [showForm, setShowForm] = useState(false); // State to toggle form visibility
+  const [formData, setFormData] = useState({
+    phone: '',
+    resume: '',
+    experience: ''
+  });
 
-  if (!job) return null;   
+  if (!job) return null;
 
-  
-  const description = job.description ? job.description : "No description provided.";
+  const description = job.description || "No description provided.";
+
+  useEffect(() => {
+    const fetchApplicationStatus = async () => {
+      if (user) {
+        const q = query(collection(db, 'jobApplications'), where('userId', '==', user.uid), where('jobId', '==', job.id));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setApplicationStatus('applied');
+        }
+      }
+    };
+
+    fetchApplicationStatus();
+  }, [user, job.id]);
+
+  useEffect(() => {
+    onAuthStateChanged(getAuth(), (currentUser) => {
+      setUser(currentUser);
+    });
+  }, []);
+
+  const handleApplyNow = () => {
+    if (user) {
+      setShowForm(true); // Show the application form
+    } else {
+      alert('Please log in to apply for this job.');
+    }
+  };
+
+  const handleSubmitApplication = async (e) => {
+    e.preventDefault();
+    if (!formData.phone || !formData.resume || !formData.experience) {
+      alert('Please fill in all the fields.');
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, 'jobpending'), {
+        jobId: job.id,
+        userId: user.uid,
+        userName: user.displayName,
+        userEmail: user.email,
+        phone: formData.phone,
+        resume: formData.resume,
+        experience: formData.experience,
+        jobTitle: job.title,
+        jobLocation: job.location,
+        createdAt: new Date(),
+      });
+
+      alert('Application submitted successfully!');
+      setApplicationStatus('applied');
+      setShowForm(false); // Close the form after submission
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      alert('Failed to submit application. Please try again.');
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-md relative">
@@ -46,17 +114,85 @@ const JobList = ({ job }) => {
               Read More
             </Link>
 
-            <a
-              href="https://forms.google.com/form/your-form-id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm"
-            >
-              Apply Now
-            </a>
+            {applicationStatus === 'not-applied' ? (
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm"
+                onClick={handleApplyNow}
+              >
+                Apply Now
+              </button>
+            ) : (
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-center text-sm"
+                disabled
+              >
+                Applied
+              </button>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Application Form Modal */}
+      {showForm && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-4">Apply for {job.title}</h2>
+
+            <form onSubmit={handleSubmitApplication}>
+              <div className="mb-4">
+                <label className="block text-gray-700">Phone Number:</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-md"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Resume Link:</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-md"
+                  value={formData.resume}
+                  onChange={(e) => setFormData({ ...formData, resume: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Experience (in years):</label>
+                <input
+                  type="number"
+                  className="w-full p-2 border rounded-md"
+                  value={formData.experience}
+                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="flex justify-between">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                >
+                  Submit Application
+                </button>
+
+                <button
+                  type="button"
+                  className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg"
+                  onClick={() => setShowForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
